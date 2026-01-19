@@ -6,12 +6,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -21,7 +19,6 @@ import java.io.IOException;
 public class SecurityFilter extends OncePerRequestFilter {
     private final JwtDecoder jwtDecoder;
     private final JwtAuthenticationConverter jwtAuthenticationConverter;
-    private final AuthenticationEntryPoint authenticationEntryPoint;
 
     /**
      * Filter that processes incoming HTTP requests to validate JWT tokens.
@@ -60,7 +57,6 @@ public class SecurityFilter extends OncePerRequestFilter {
                 if (authentication == null) {
                     log.debug("JwtAuthenticationConverter returned null for subject={}", jwt.getSubject());
                     SecurityContextHolder.clearContext();
-                    authenticationEntryPoint.commence(request, response, new BadCredentialsException("No authorities in token"));
                     return;
                 }
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -68,7 +64,6 @@ public class SecurityFilter extends OncePerRequestFilter {
             } catch (Exception ex) {
                 log.warn("Invalid JWT token: {}", ex.getMessage());
                 SecurityContextHolder.clearContext();
-                authenticationEntryPoint.commence(request, response, new BadCredentialsException("Invalid JWT token", ex));
                 return;
             }
         } else {

@@ -21,7 +21,6 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -167,13 +166,11 @@ public class SecurityConfig {
      *
      * @param jwtDecoder                 the JwtDecoder
      * @param jwtAuthenticationConverter the JwtAuthenticationConverter
-     * @param authenticationEntryPoint   the AuthenticationEntryPoint
      * @return the SecurityFilter
      */
     @Bean
     public SecurityFilter securityFilter(JwtDecoder jwtDecoder,
-                                         JwtAuthenticationConverter jwtAuthenticationConverter,
-                                         AuthenticationEntryPoint authenticationEntryPoint) {
-        return new SecurityFilter(jwtDecoder, jwtAuthenticationConverter, authenticationEntryPoint);
+                                         JwtAuthenticationConverter jwtAuthenticationConverter) {
+        return new SecurityFilter(jwtDecoder, jwtAuthenticationConverter);
     }
 }
