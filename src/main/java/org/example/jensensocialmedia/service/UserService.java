@@ -12,16 +12,21 @@ import org.example.jensensocialmedia.model.User;
 import org.example.jensensocialmedia.repository.UserRepository;
 import org.example.jensensocialmedia.util.HtmlSanitizer;
 import org.slf4j.MDC;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Service for managing user-related operations.
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserProfileResponse> getAllUsers() {
         MDC.put("requestId", java.util.UUID.randomUUID().toString());
@@ -45,6 +50,8 @@ public class UserService {
     public CreateUserResponse createUser(CreateUserRequest request) {
         MDC.put("requestId", java.util.UUID.randomUUID().toString());
         User user = userMapper.fromCreateUserRequest(request);
+        user.setPassword(passwordEncoder.encode(request.password()));
+        log.info("Creating new user with username: {}", user.getUsername());
         User savedUser = userRepository.save(user);
         return userMapper.toUserCreateUserResponse(savedUser);
     }
