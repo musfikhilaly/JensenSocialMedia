@@ -7,10 +7,12 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
 
-    // find all posts by a specific user ID
+    // Get all posts by user ID
     List<Post> findByUserId(Long userId);
 
+    // Get all posts by username
+    List<Post> findByUserUsername(String username);
 
-    // find all posts sorted by creation time (newest first)
+    // Get all posts ordered by creation time (from BaseEntity)
     List<Post> findAllByOrderByCreatedAtDesc();
 }
