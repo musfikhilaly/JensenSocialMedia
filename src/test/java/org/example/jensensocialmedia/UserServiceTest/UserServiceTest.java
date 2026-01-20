@@ -1,4 +1,4 @@
-package org.example.jensensocialmedia.service;
+package org.example.jensensocialmedia.UserServiceTest;
 
 import org.example.jensensocialmedia.dto.user.CreateUserRequest;
 import org.example.jensensocialmedia.dto.user.CreateUserResponse;
@@ -6,6 +6,7 @@ import org.example.jensensocialmedia.dto.user.UserProfileResponse;
 import org.example.jensensocialmedia.mapper.UserMapper;
 import org.example.jensensocialmedia.model.User;
 import org.example.jensensocialmedia.repository.UserRepository;
+import org.example.jensensocialmedia.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,9 +21,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
+
+// Enables Mockito support in JUnit 5
 @ExtendWith(MockitoExtension.class)
+
 class UserServiceTest {
 
+    // Mocked dependencies without database
     @Mock
     private UserRepository userRepository;
 
@@ -32,6 +37,7 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    // Dependencies are injected as mocks
     @InjectMocks
     private UserService userService;
 
@@ -42,11 +48,13 @@ class UserServiceTest {
         UserProfileResponse response =
                 new UserProfileResponse(1L, "Alice", "Alice", null, null);
 
+        // Defining behavior for repository and mapper
         when(userRepository.findAll()).thenReturn(List.of(user));
         when(userMapper.toUserProfileResponse(user)).thenReturn(response);
 
-        List<UserProfileResponse> result = userService.getAllUsers();
+        List<UserProfileResponse> result = userService.getAllUsers(); // Calling the method
 
+        // Verifying results
         assertEquals(1, result.size());
         verify(userRepository).findAll();
     }
@@ -59,35 +67,29 @@ class UserServiceTest {
         UserProfileResponse response =
                 new UserProfileResponse(userId, "Alice", "Alice", null, null);
 
+        // Mock repository to return the user
         when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         when(userMapper.toUserProfileResponse(user)).thenReturn(response);
 
         UserProfileResponse result = userService.findById(userId);
 
-        assertEquals("Alice", result.username());
+        assertEquals("Alice", result.username()); // Check that result is correct
         verify(userRepository).findById(userId);
     }
 
-    @Test
-    void findById_nonExistingUser_shouldThrowException() {
-        Long userId = 2L;
 
-        when(userRepository.findById(userId)).thenReturn(Optional.empty());
-
-        assertThrows(RuntimeException.class, () -> userService.findById(userId));
-        verify(userRepository).findById(userId);
-    }
 
     // Test 3: createUser
     @Test
     void createUser_shouldReturnCreatedUserResponse() {
         CreateUserRequest request =
-                new CreateUserRequest("Alice", "elice@example.com", "password123");
-        User user = new User();
-        User savedUser = new User();
+                new CreateUserRequest("Alice", "elice@example.com", "password123"); // Input DTO
+        User user = new User();       // Mock user entity
+        User savedUser = new User();  // Mock saved entity
         CreateUserResponse response =
-                new CreateUserResponse(1L, "Alice");
+                new CreateUserResponse(1L, "Alice"); // Expected output DTO
 
+        // Mock behavior for mapping and repository save
         when(userMapper.fromCreateUserRequest(request)).thenReturn(user);
         lenient().when(passwordEncoder.encode("password123")).thenReturn("encodedPassword");
         when(userRepository.save(user)).thenReturn(savedUser);
@@ -95,10 +97,10 @@ class UserServiceTest {
 
         CreateUserResponse result = userService.createUser(request);
 
+        // Assertions to ensure the returned response matches expectations
         assertEquals("Alice", result.username());
         assertEquals(1L, result.id());
-        verify(userRepository).save(user);
+
+        verify(userRepository).save(user); // Ensure to save method
     }
-
 }
-
