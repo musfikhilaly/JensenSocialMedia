@@ -76,7 +76,7 @@ class UserServiceTest {
         assertEquals("Alice", result.username()); // Check that result is correct
         verify(userRepository).findById(userId);
     }
-
+    
 
 
     // Test 3: createUser
