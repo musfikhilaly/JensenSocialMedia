@@ -79,11 +79,11 @@ class UserServiceTest {
 
 
 
-    // Test 3: createUser
+    // Test 3: CreateUser
     @Test
     void createUser_shouldReturnCreatedUserResponse() {
         CreateUserRequest request =
-                new CreateUserRequest("Alice", "elice@example.com", "password123"); // Input DTO
+                new CreateUserRequest("Alice", "alice@example.com", "password123"); // Input DTO
         User user = new User();       // Mock user entity
         User savedUser = new User();  // Mock saved entity
         CreateUserResponse response =
@@ -97,7 +97,7 @@ class UserServiceTest {
 
         CreateUserResponse result = userService.createUser(request);
 
-        // Assertions to ensure the returned response matches expectations
+        // Assertions to ensure that returned response matches expectations
         assertEquals("Alice", result.username());
         assertEquals(1L, result.id());
 
