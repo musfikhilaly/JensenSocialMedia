@@ -2,10 +2,7 @@ package org.example.jensensocialmedia.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.jensensocialmedia.dto.user.CreateUserRequest;
-import org.example.jensensocialmedia.dto.user.CreateUserResponse;
-import org.example.jensensocialmedia.dto.user.UserProfileResponse;
-import org.example.jensensocialmedia.dto.user.UserUpdateProfileRequest;
+import org.example.jensensocialmedia.dto.user.*;
 import org.example.jensensocialmedia.service.UserService;
 import org.example.jensensocialmedia.util.CurrentUserProvider;
 import org.springframework.http.ResponseEntity;
@@ -57,5 +54,10 @@ public class UserController {
     public ResponseEntity<Void> deleteMyAccount() {
         userService.deleteUser(currentUserProvider.getCurrentUserId());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/with-posts")
+    public ResponseEntity<UserWithPostsResponseDTO> getUserWithPosts(@PathVariable Long id) {
+        return ResponseEntity.ok().body(userService.getUserWithPosts(id));
     }
 }
