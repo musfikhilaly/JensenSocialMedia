@@ -1,4 +1,4 @@
-package org.example.jensensocialmedia.UserServiceTest;
+package org.example.jensensocialmedia.service;
 
 import org.example.jensensocialmedia.dto.user.CreateUserRequest;
 import org.example.jensensocialmedia.dto.user.CreateUserResponse;
@@ -6,7 +6,6 @@ import org.example.jensensocialmedia.dto.user.UserProfileResponse;
 import org.example.jensensocialmedia.mapper.UserMapper;
 import org.example.jensensocialmedia.model.User;
 import org.example.jensensocialmedia.repository.UserRepository;
-import org.example.jensensocialmedia.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,13 +17,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 
 // Enables Mockito support in JUnit 5
 @ExtendWith(MockitoExtension.class)
-
 class UserServiceTest {
 
     // Mocked dependencies without database
@@ -76,7 +73,6 @@ class UserServiceTest {
         assertEquals("Alice", result.username()); // Check that result is correct
         verify(userRepository).findById(userId);
     }
-
 
 
     // Test 3: CreateUser
