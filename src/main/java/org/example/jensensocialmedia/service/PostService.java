@@ -74,7 +74,7 @@ public class PostService {
 
     // ========== Update & Delete ==========
     //update
-    public CreatePostResponse updatePost(Long postId, @Valid CreatePostRequest request) {
+    public CreatePostResponse updatePost(Long postId, CreatePostRequest request) {
         MDC.put("requestId", java.util.UUID.randomUUID().toString());
         Long currentUserId = requireCurrentUserId();
         Long pid = requireId(postId);
