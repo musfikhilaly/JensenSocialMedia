@@ -18,9 +18,9 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
@@ -60,7 +60,7 @@ class PostServiceTest {
         post2.setContent("Second post");
         post2.setCreatedAt(later);
 
-        List<Post> posts = List.of(post1, post2);
+        List<Post> posts = List.of(post2, post1);
         when(postRepository.findAllByOrderByCreatedAtDesc())
                 .thenReturn(posts);
 
@@ -68,9 +68,9 @@ class PostServiceTest {
         List<CreatePostResponse> feed = postService.getFeed();
 
         // Assert
-        assert (feed.size() == 2);
-        assert (feed.get(0).id().equals(1L)); // Newest post first
-        assert (feed.get(1).id().equals(2L));
+        assertEquals(2, feed.size());
+        assertEquals(2L, feed.get(0).id()); // Newest post first
+        assertEquals(1L, feed.get(1).id());
     }
 
     @Test
@@ -104,8 +104,11 @@ class PostServiceTest {
         CreatePostResponse response = postService.createPost(request);
 
         // Assert
-        assert (response.id().equals(1L));
-        assert (response.content().equals("First post"));
+        assertEquals(1L, response.id());
+        assertEquals("First post", response.content());
+        verify(currentUserProvider).getCurrentUserId();
+        verify(userRepository).findById(1L);
+        verify(postRepository).save(any(Post.class));
     }
 
     @Test
@@ -125,6 +128,7 @@ class PostServiceTest {
 
         // Act & Assert
         assertThrows(RuntimeException.class, () -> postService.createPost(request));
+        verify(postRepository, never()).save(any());
     }
 
     @Test
@@ -138,6 +142,8 @@ class PostServiceTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> postService.createPost(request));
+        verify(postRepository, never()).findById(any());
+        verify(postRepository, never()).save(any());
     }
 
     @Test
@@ -151,6 +157,8 @@ class PostServiceTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> postService.createPost(request));
+        verify(postRepository, never()).findById(any());
+        verify(postRepository, never()).save(any());
     }
 
     @Test
@@ -186,9 +194,9 @@ class PostServiceTest {
         List<CreatePostResponse> myPosts = postService.getMyPosts();
 
         // Assert
-        assert (myPosts.size() == 2);
-        assert (myPosts.get(0).id().equals(2L)); // Newest post first
-        assert (myPosts.get(1).id().equals(1L));
+        assertEquals(2, myPosts.size());
+        assertEquals(2L, myPosts.get(0).id()); // Newest post first
+        assertEquals(1L, myPosts.get(1).id());
     }
 
     @Test
@@ -218,8 +226,8 @@ class PostServiceTest {
         CreatePostResponse response = postService.updatePost(1L, updateRequest);
 
         // Assert
-        assert (response.id().equals(1L));
-        assert (response.content().equals("Updated content"));
+        assertEquals(1L, response.id());
+        assertEquals("Updated content", response.content());
     }
 
     @Test
@@ -246,6 +254,7 @@ class PostServiceTest {
 
         // Act & Assert
         assertThrows(SecurityException.class, () -> postService.updatePost(1L, updateRequest));
+        verify(postRepository, never()).save(any(Post.class));
     }
 
     @Test
@@ -258,6 +267,8 @@ class PostServiceTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> postService.updatePost(0L, updateRequest));
+        verify(postRepository, never()).findById(any());
+        verify(postRepository, never()).save(any(Post.class));
     }
 
     @Test
@@ -270,6 +281,8 @@ class PostServiceTest {
 
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> postService.updatePost(null, updateRequest));
+        verify(postRepository, never()).findById(any());
+        verify(postRepository, never()).save(any(Post.class));
     }
 
     @Test
@@ -297,7 +310,7 @@ class PostServiceTest {
         postService.deletePost(1L);
 
         // Assert
-        // No exception means success
+        verify(postRepository, times(1)).delete(post);
     }
 
     @Test
@@ -323,5 +336,6 @@ class PostServiceTest {
 
         // Act & Assert
         assertThrows(SecurityException.class, () -> postService.deletePost(1L));
+        verify(postRepository, never()).delete(any());
     }
 }
