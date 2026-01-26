@@ -2,7 +2,7 @@ package org.example.jensensocialmedia.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.jensensocialmedia.dto.auth.JwtResponseDTO;
-import org.example.jensensocialmedia.dto.auth.LonginRequestDTO;
+import org.example.jensensocialmedia.dto.auth.LoginRequestDTO;
 import org.example.jensensocialmedia.service.TokenService;
 import org.example.jensensocialmedia.service.UserService;
 import org.example.jensensocialmedia.util.CurrentUserProvider;
@@ -34,7 +34,7 @@ public class AuthController {
      * @return a response entity containing the JWT token
      */
     @PostMapping("/session")
-    public ResponseEntity<JwtResponseDTO> login(@RequestBody LonginRequestDTO request) {
+    public ResponseEntity<JwtResponseDTO> login(@RequestBody LoginRequestDTO request) {
         Authentication auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
