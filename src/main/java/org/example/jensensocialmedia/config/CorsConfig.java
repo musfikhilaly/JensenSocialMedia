@@ -24,7 +24,7 @@ public class CorsConfig {
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         // Expose specific headers to the client
         config.setExposedHeaders(List.of("Authorization"));
-        config.setAllowCredentials(false);
+        config.setAllowCredentials(true);
         // Apply the CORS configuration to all paths
         UrlBasedCorsConfigurationSource source =
                 new UrlBasedCorsConfigurationSource();
