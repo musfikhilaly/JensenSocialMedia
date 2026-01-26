@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -23,7 +24,10 @@ public class TokenService {
 
     public String generateToken(Authentication authentication) {
         Instant now = Instant.now();
-        String scope = authentication.getAuthorities().stream()
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        String scope = (authorities == null) ? "" : authentication.getAuthorities()
+                .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(" "));
 
