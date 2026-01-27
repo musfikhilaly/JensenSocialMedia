@@ -79,7 +79,8 @@ class UserServiceTest {
     @Test
     void createUser_shouldReturnCreatedUserResponse() {
         CreateUserRequest request =
-                new CreateUserRequest("Alice", "alice@example.com", "password123"); // Input DTO
+                new CreateUserRequest("Alice", "alice@example.com", "password123",
+                        "Alice", "Hello world!", "aaa"); // Input DTO
         User user = new User();       // Mock user entity
         User savedUser = new User();  // Mock saved entity
         CreateUserResponse response =
