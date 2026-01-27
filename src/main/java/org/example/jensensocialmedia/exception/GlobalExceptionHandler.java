@@ -2,6 +2,7 @@ package org.example.jensensocialmedia.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -74,5 +75,15 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
-    
+
+    /**
+     * Handles UsernameNotFoundException and constructs a response with a NOT_FOUND status.
+     *
+     * @param ex the UsernameNotFoundException
+     * @return a ResponseEntity with the exception message and a NOT_FOUND status
+     */
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<String> handleUsernameNotFoundException(UsernameNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
 }
