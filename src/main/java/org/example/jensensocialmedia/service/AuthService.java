@@ -50,6 +50,7 @@ public class AuthService {
             userId = su.getId();
         } else {
             log.warn("Unhandled principal type: {}", principal.getClass().getName());
+            throw new IllegalStateException("Unable to extract user ID from principal");
         }
 
         log.info("User ID extracted: {}", userId);
