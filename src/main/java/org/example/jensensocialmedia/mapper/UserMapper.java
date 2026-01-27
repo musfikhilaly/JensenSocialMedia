@@ -27,8 +27,9 @@ public interface UserMapper {
      * @return the corresponding User entity
      */
     @Mapping(target = "role", constant = "USER")
-    @Mapping(target = "displayName", source = "request.username")
-    @Mapping(target = "bio", constant = "Hello World.")
+    @Mapping(target = "displayName", source = "displayName", defaultValue = "request.username")
+    @Mapping(target = "bio", source = "bio", defaultValue = "Hello World.")
+    @Mapping(target = "avatarUrl", source = "profileImagePath")
     User fromCreateUserRequest(CreateUserRequest request);
 
     /**

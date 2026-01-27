@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.jensensocialmedia.dto.post.CreatePostRequest;
 import org.example.jensensocialmedia.dto.post.CreatePostResponse;
+import org.example.jensensocialmedia.dto.post.FeedResponseDTO;
 import org.example.jensensocialmedia.exception.UserNotFoundException;
+import org.example.jensensocialmedia.mapper.PostMapper;
 import org.example.jensensocialmedia.model.Post;
 import org.example.jensensocialmedia.model.User;
 import org.example.jensensocialmedia.repository.PostRepository;
@@ -24,15 +26,16 @@ import java.util.List;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final PostMapper postMapper;
     private final CurrentUserProvider currentUserProvider;
 
-// all posts
-    public List<CreatePostResponse> getFeed() {
+    // all posts
+    public List<FeedResponseDTO> getFeed() {
         MDC.put("requestId", java.util.UUID.randomUUID().toString());
         log.info("Fetching public feed (newest first)");
         return postRepository.findAllByOrderByCreatedAtDesc()
                 .stream()
-                .map(this::toResponse)
+                .map(postMapper::toFeedResponseDTO)
                 .toList();
     }
 
@@ -71,7 +74,6 @@ public class PostService {
     }
 
 
-
     // ========== Update & Delete ==========
     //update
     public CreatePostResponse updatePost(Long postId, CreatePostRequest request) {
@@ -91,7 +93,8 @@ public class PostService {
         Post saved = postRepository.save(post);
         return toResponse(saved);
     }
-//delete post
+
+    //delete post
     public void deletePost(Long postId) {
         MDC.put("requestId", java.util.UUID.randomUUID().toString());
         Long currentUserId = requireCurrentUserId();

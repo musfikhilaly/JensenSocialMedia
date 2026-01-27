@@ -4,5 +4,5 @@ import org.example.jensensocialmedia.dto.user.UserInfoDTO;
 
 import java.time.Instant;
 
-public record PostSummaryDTO(Long id, String text, Instant createdAt, UserInfoDTO user) {
+public record FeedResponseDTO(Long id, String text, Instant createdAt, UserInfoDTO user) {
 }

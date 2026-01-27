@@ -19,5 +19,18 @@ public record CreateUserRequest(
         @Size(min = 8, max = 40, message = "Password must be between 8 and 40 characters")
         @Pattern(regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)[A-Za-z\\d]{8,}$",
                 message = "Password must be at least 8 characters long, include one uppercase letter, one lowercase letter, and one number")
-        String password) {
+        String password,
+
+        @NotBlank(message = "Display name cannot be empty")
+        @Size(min = 3, max = 50, message = "Display name must be between 3 and 50 characters")
+        @Pattern(regexp = "^[A-Za-z0-9 ]*$", message = "Display name can only contain letters, numbers, and spaces")
+        String displayName,
+
+        @Size(max = 160, message = "Bio must be at most 160 characters")
+        String bio,
+
+        @Size(max = 255, message = "Profile image path too long")
+        @Pattern(regexp = "^[A-Za-z0-9._\\-/]+$", message = "Invalid characters in profile image path")
+        String profileImagePath
+) {
 }

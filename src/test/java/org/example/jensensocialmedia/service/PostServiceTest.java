@@ -2,6 +2,9 @@ package org.example.jensensocialmedia.service;
 
 import org.example.jensensocialmedia.dto.post.CreatePostRequest;
 import org.example.jensensocialmedia.dto.post.CreatePostResponse;
+import org.example.jensensocialmedia.dto.post.FeedResponseDTO;
+import org.example.jensensocialmedia.dto.user.UserInfoDTO;
+import org.example.jensensocialmedia.mapper.PostMapper;
 import org.example.jensensocialmedia.model.Post;
 import org.example.jensensocialmedia.model.User;
 import org.example.jensensocialmedia.repository.PostRepository;
@@ -33,6 +36,9 @@ class PostServiceTest {
     @Mock
     private CurrentUserProvider currentUserProvider;
 
+    @Mock
+    private PostMapper postMapper;
+
     @InjectMocks
     private PostService postService;
 
@@ -60,17 +66,25 @@ class PostServiceTest {
         post2.setContent("Second post");
         post2.setCreatedAt(later);
 
+        UserInfoDTO userInfoDTO = new UserInfoDTO(1L, "Emil");
+
+
         List<Post> posts = List.of(post2, post1);
         when(postRepository.findAllByOrderByCreatedAtDesc())
                 .thenReturn(posts);
+        when(postMapper.toFeedResponseDTO(post2))
+                .thenReturn(new FeedResponseDTO(2L, "Second post", later, userInfoDTO));
+        when(postMapper.toFeedResponseDTO(post1))
+                .thenReturn(new FeedResponseDTO(1L, "First post", now, userInfoDTO));
 
         // Act
-        List<CreatePostResponse> feed = postService.getFeed();
+        List<FeedResponseDTO> feed = postService.getFeed();
 
         // Assert
         assertEquals(2, feed.size());
         assertEquals(2L, feed.get(0).id()); // Newest post first
         assertEquals(1L, feed.get(1).id());
+        assertEquals("Emil", feed.get(0).user().displayName());
     }
 
     @Test
