@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.jensensocialmedia.dto.post.CreatePostRequest;
 import org.example.jensensocialmedia.dto.post.CreatePostResponse;
+import org.example.jensensocialmedia.dto.post.FeedResponseDTO;
 import org.example.jensensocialmedia.service.PostService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +21,7 @@ public class PostController {
 
     // GET /posts — public feed
     @GetMapping("/posts")
-    public List<CreatePostResponse> getFeed() {
+    public List<FeedResponseDTO> getFeed() {
         return postService.getFeed();
     }
 
