@@ -25,6 +25,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.PrivateKey;
@@ -49,7 +50,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/v3/api-docs/**",
+                        .requestMatchers("/request-token", "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html").permitAll()
                         .requestMatchers(HttpMethod.POST, "/users").permitAll() // Allow user registration

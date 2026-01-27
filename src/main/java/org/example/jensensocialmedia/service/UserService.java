@@ -70,7 +70,7 @@ public class UserService {
             log.warn("Invalid currentUserId: {}", currentUserId);
             throw new IllegalArgumentException("Current user ID cannot be null or less than or equal to zero");
         }
-        User user = userRepository.findById(currentUserId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(currentUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
         log.info("Updating user profile fields");
         user.setDisplayName(request.displayName());
         user.setBio(HtmlSanitizer.sanitize(request.bio()));
@@ -103,7 +103,7 @@ public class UserService {
             throw new IllegalArgumentException("User ID cannot be null or less than or equal to zero");
         }
         log.info("Fetching user with ID: {}", id);
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         log.info("Fetching posts for user ID: {}", id);
         List<Post> posts = postRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
         log.info("Mapping user and posts to DTOs");
