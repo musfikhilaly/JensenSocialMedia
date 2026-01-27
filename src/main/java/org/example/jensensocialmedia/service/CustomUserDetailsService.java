@@ -1,7 +1,6 @@
 package org.example.jensensocialmedia.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.jensensocialmedia.exception.UserNotFoundException;
 import org.example.jensensocialmedia.model.SecurityUser;
 import org.example.jensensocialmedia.model.User;
 import org.example.jensensocialmedia.repository.UserRepository;
@@ -26,7 +25,7 @@ public class CustomUserDetailsService implements UserDetailsService {
      */
     @Override
     public SecurityUser loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User not found"));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return new SecurityUser(user);
     }
 }
