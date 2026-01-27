@@ -10,6 +10,8 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface PostMapper {
     @Mapping(target = "text", source = "post.content")
+    @Mapping(target = "user.id", source = "post.user.id")
+    @Mapping(target = "user.displayName", source = "post.user.displayName")
     PostSummaryDTO toPostSummaryDTO(Post post);
 
     @Mapping(target = "user.id", source = "post.user.id")

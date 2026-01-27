@@ -11,6 +11,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // Get all posts by user ID
     List<Post> findByUserId(Long userId);
 
+    @EntityGraph(attributePaths = {"user"})
     List<Post> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     // Get all posts by username

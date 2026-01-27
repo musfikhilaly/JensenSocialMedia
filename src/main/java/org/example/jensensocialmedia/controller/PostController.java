@@ -2,6 +2,7 @@ package org.example.jensensocialmedia.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.jensensocialmedia.dto.post.CreatePostRequest;
 import org.example.jensensocialmedia.dto.post.CreatePostResponse;
 import org.example.jensensocialmedia.dto.post.FeedResponseDTO;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping
 @RequiredArgsConstructor
@@ -26,8 +28,9 @@ public class PostController {
     }
 
     // POST /posts — create for current user
-    @PostMapping("/posts")
+    @PostMapping("/users/{userId}/posts")
     public ResponseEntity<CreatePostResponse> create(@RequestBody @Valid CreatePostRequest request) {
+        log.info("Received request to create post");
         CreatePostResponse response = postService.createPost(request);
         return ResponseEntity.created(URI.create("/posts/" + response.id())).body(response);
     }
