@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 
-// Enables Mockito support in JUnit 5wwwwww
+// Enables Mockito support in JUnit 5
 @ExtendWith(MockitoExtension.class)
 
 class UserServiceTest {
