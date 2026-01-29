@@ -24,7 +24,9 @@ import static org.mockito.Mockito.*;
 
 // Enables Mockito support in JUnit 5
 @ExtendWith(MockitoExtension.class)
-
+/**
+ * Unit tests for UserService.
+ */
 class UserServiceTest {
 
     // Mocked dependencies without database
@@ -38,10 +40,15 @@ class UserServiceTest {
     private PasswordEncoder passwordEncoder;
 
     // Dependencies are injected as mocks
+
     @InjectMocks
     private UserService userService;
 
     // Test 1: getAllUsers
+
+    /**
+     * Test that getAllUsers returns a list of users.
+     */
     @Test
     void getAllUsers_shouldReturnListOfUsers() {
         User user = new User();
@@ -60,6 +67,10 @@ class UserServiceTest {
     }
 
     // Test 2: findById
+
+    /**
+     * Test that findById returns the correct user profile for an existing user.
+     */
     @Test
     void findById_existingUser_shouldReturnUserProfile() {
         Long userId = 1L;
@@ -80,6 +91,10 @@ class UserServiceTest {
 
 
     // Test 3: CreateUser
+
+    /**
+     * Test that createUser returns the correct user profile for a newly created user.
+     */
     @Test
     void createUser_shouldReturnCreatedUserResponse() {
         CreateUserRequest request =
