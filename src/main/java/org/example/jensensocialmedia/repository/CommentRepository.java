@@ -15,13 +15,12 @@ import java.util.List;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("""
                 SELECT new org.example.jensensocialmedia.dto.comment.CommentDetailResponse(
-                    c.id, c.content, c.createdAt, u.id, u.displayName, COUNT(DISTINCT child.id)
+                    c.id, c.content, c.createdAt, u.id, u.displayName, c.parentComment.id, COUNT(DISTINCT child.id)
                     )
                 FROM Comment c
                 JOIN c.user u
                 LEFT JOIN Comment child ON child.parentComment = c
                 WHERE c.post.id = :postId
-                AND c.parentComment IS NULL
                 GROUP BY c.id, u.id
                 ORDER BY c.createdAt ASC
             """)
@@ -45,7 +44,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
 
     @Query("""
                 SELECT new org.example.jensensocialmedia.dto.comment.CommentDetailResponse(
-                    c.id, c.content, c.createdAt, u.id, u.displayName, COUNT(DISTINCT child.id)
+                    c.id, c.content, c.createdAt, u.id, u.displayName, c.parentComment.id,COUNT(DISTINCT child.id)
                     )
                 FROM Comment c
                 JOIN c.user u

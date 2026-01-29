@@ -13,6 +13,7 @@ import org.example.jensensocialmedia.model.User;
 import org.example.jensensocialmedia.repository.CommentRepository;
 import org.example.jensensocialmedia.repository.PostRepository;
 import org.example.jensensocialmedia.repository.UserRepository;
+import org.example.jensensocialmedia.util.CurrentUserProvider;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -31,14 +32,16 @@ public class CommentService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final CommentMapper commentMapper;
+    private final CurrentUserProvider currentUserProvider;
 
-    public CommentCreateResponse createComment(Long postId, Long userId, CommentCreateRequest request) {
+    public CommentCreateResponse createComment(Long postId, CommentCreateRequest request) {
+        log.info("Creating comment for postId={}", postId);
         // Validate ID
         if (postId == null || postId <= 0) {
             throw new IllegalArgumentException("Invalid post id");
-        } else if (userId == null || userId <= 0) {
-            throw new IllegalArgumentException("Invalid user id");
         }
+
+        Long userId = currentUserProvider.getCurrentUserId();
         User author = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("Author doesn't exist with id=" + userId));
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post doesn't exist with id=" + postId));
         Comment comment;
@@ -59,6 +62,7 @@ public class CommentService {
     }
 
     public @Nullable Slice<CommentDetailResponse> getPostComments(Long postId, @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        log.info("Fetching comments for postId={}", postId);
         // Validate ID
         if (postId == null || postId <= 0) {
             throw new IllegalArgumentException("Invalid post id");
@@ -67,6 +71,7 @@ public class CommentService {
     }
 
     public @Nullable List<CommentReplyResponse> getReplyComments(Long parentId) {
+        log.info("Fetching reply comments for parentId={}", parentId);
         // Validate ID
         if (parentId == null || parentId <= 0) {
             throw new IllegalArgumentException("Invalid parent comment id");
@@ -74,7 +79,9 @@ public class CommentService {
         return commentRepository.findByParentId(parentId);
     }
 
-    public @Nullable CommentDetailResponse updateComment(Long commentId, CommentUpdateRequest request, Long userId) {
+    public @Nullable CommentDetailResponse updateComment(Long commentId, CommentUpdateRequest request) {
+        log.info("Updating comment commentId={}", commentId);
+        Long userId = currentUserProvider.getCurrentUserId();
         Comment currentComment = isCorrectAuthor(commentId, userId);
         // Update content and updateAt
         currentComment.setContent(request.content());
@@ -83,12 +90,15 @@ public class CommentService {
         return commentRepository.findCommentById(commentId);
     }
 
-    public void deleteComment(Long commentId, Long userId) {
+    public void deleteComment(Long commentId) {
+        log.info("Deleting comment commentId={}", commentId);
+        Long userId = currentUserProvider.getCurrentUserId();
         isCorrectAuthor(commentId, userId);
         commentRepository.deleteById(commentId);
     }
 
     private Comment isCorrectAuthor(Long commentId, Long userId) {
+        log.info("Verifying author for commentId={} and userId={}", commentId, userId);
         // Validate ID
         if (commentId == null || commentId <= 0) {
             throw new IllegalArgumentException("Invalid comment id");

@@ -3,7 +3,6 @@ package org.example.jensensocialmedia.controller;
 import lombok.RequiredArgsConstructor;
 import org.example.jensensocialmedia.dto.comment.*;
 import org.example.jensensocialmedia.service.CommentService;
-import org.example.jensensocialmedia.util.CurrentUserProvider;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-    private final CurrentUserProvider currentUserProvider;
+
 
     @PostMapping
     public ResponseEntity<CommentCreateResponse> createComment(@PathVariable Long postId, @RequestBody CommentCreateRequest request) {
-        Long userId = currentUserProvider.getCurrentUserId();
-        CommentCreateResponse response = commentService.createComment(postId, userId, request);
+        CommentCreateResponse response = commentService.createComment(postId, request);
         return ResponseEntity
                 .created(URI.create("/posts/" + postId + "/comments/" + response.id()))
                 .body(response);
@@ -44,14 +42,12 @@ public class CommentController {
 
     @PutMapping("{commentId}")
     public ResponseEntity<CommentDetailResponse> updateComment(@PathVariable Long commentId, @RequestBody CommentUpdateRequest request) {
-        Long userId = currentUserProvider.getCurrentUserId();
-        return ResponseEntity.ok().body(commentService.updateComment(commentId, request, userId));
+        return ResponseEntity.ok().body(commentService.updateComment(commentId, request));
     }
 
     @DeleteMapping("{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable Long commentId) {
-        Long userId = currentUserProvider.getCurrentUserId();
-        commentService.deleteComment(commentId, userId);
+        commentService.deleteComment(commentId);
         return ResponseEntity.noContent().build();
     }
 }

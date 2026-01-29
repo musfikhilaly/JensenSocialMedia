@@ -7,5 +7,6 @@ public record CommentDetailResponse(Long id,
                                     Instant createdAt,
                                     Long authorId,
                                     String displayName,
+                                    Long parentId,
                                     long commentCount) {
 }
