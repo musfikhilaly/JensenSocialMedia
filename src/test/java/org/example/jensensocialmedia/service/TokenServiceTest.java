@@ -48,9 +48,17 @@ class TokenServiceTest {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_USER");
         Collection<? extends GrantedAuthority> authorities = Collections.singletonList(authority); // <-- use wildcard
         Authentication auth = mock(Authentication.class);
+
+        SecurityUser principal = new SecurityUser(
+                User.builder()
+                        .id(1L)
+                        .username("Alice")
+                        .role("USER")
+                        .build()
+        );
         when(auth.getName()).thenReturn("Alice");
+        when(auth.getPrincipal()).thenReturn(principal);
         doReturn(authorities).when(auth).getAuthorities(); // to avoid unchecked assignment warning
-        when(auth.getPrincipal()).thenReturn("Alice");
 
         Instant issuedAt = Instant.parse("2024-01-01T00:00:00Z");
         Instant expiresAt = issuedAt.plusSeconds(3600);
@@ -66,6 +74,7 @@ class TokenServiceTest {
         JwtClaimsSet claims = paramsCaptor.getValue().getClaims(); // Extract claims from captured argument
         assertEquals("Alice", claims.getSubject()); // Verify subject
         assertEquals("ROLE_USER", claims.getClaim("scope")); // Verify scope
+        assertEquals(1L, (Long) claims.getClaim("user_id")); // Verify user_id
         assertTrue(claims.getIssuedAt().isBefore(claims.getExpiresAt())); // Verify issuedAt is before expiresAt
         assertEquals(3600, Duration.between(claims.getIssuedAt(), claims.getExpiresAt()).getSeconds()); // Verify duration
     }
@@ -76,9 +85,17 @@ class TokenServiceTest {
         // Arrange
         Collection<? extends GrantedAuthority> authorities = Collections.emptyList();
         Authentication auth = mock(Authentication.class);
+
+        SecurityUser principal = new SecurityUser(
+                User.builder()
+                        .id(1L)
+                        .username("Alice")
+                        .role("USER")
+                        .build()
+        );
         when(auth.getName()).thenReturn("Bob");
         doReturn(authorities).when(auth).getAuthorities(); // to avoid unchecked assignment warning
-        when(auth.getPrincipal()).thenReturn("Bob");
+        when(auth.getPrincipal()).thenReturn(principal);
 
         Instant issuedAt = Instant.parse("2024-01-01T00:00:00Z");
         Instant expiresAt = issuedAt.plusSeconds(3600);
@@ -105,13 +122,24 @@ class TokenServiceTest {
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("Charlie");
         doReturn(null).when(auth).getAuthorities(); // to avoid unchecked assignment warning
-        when(auth.getPrincipal()).thenReturn("Charlie");
+
+        SecurityUser principal = new SecurityUser(
+                User.builder()
+                        .id(1L)
+                        .username("Alice")
+                        .role("USER")
+                        .build()
+        );
+
+        when(auth.getPrincipal()).thenReturn(principal);
         Instant issuedAt = Instant.parse("2024-01-01T00:00:00Z");
         Instant expiresAt = issuedAt.plusSeconds(3600);
         Jwt returned = new Jwt("tokenValue", issuedAt, expiresAt, Map.of("algorithm", "none"), Map.of("sub", "Charlie"));
         when(jwtEncoder.encode(any(JwtEncoderParameters.class))).thenReturn(returned);
+
         // Act
         String token = tokenService.generateToken(auth);
+
         // Assert
         assertEquals("tokenValue", token); // Verify token value
         verify(jwtEncoder).encode(paramsCaptor.capture()); // Capture the argument
@@ -132,8 +160,17 @@ class TokenServiceTest {
         );
         Authentication auth = mock(Authentication.class);
         when(auth.getName()).thenReturn("Dana");
-        doReturn(authorities).when(auth).getAuthorities(); // to avoid unchecked assignment warning
-        when(auth.getPrincipal()).thenReturn("Dana");
+        doReturn(authorities).when(auth).getAuthorities();
+
+        SecurityUser principal = new SecurityUser(
+                User.builder()
+                        .id(1L)
+                        .username("Alice")
+                        .role("USER")
+                        .build()
+        );
+        // to avoid unchecked assignment warning
+        when(auth.getPrincipal()).thenReturn(principal);
 
         Instant issuedAt = Instant.parse("2024-01-01T00:00:00Z");
         Instant expiresAt = issuedAt.plusSeconds(3600);

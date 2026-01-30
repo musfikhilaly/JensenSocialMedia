@@ -2,6 +2,7 @@ package org.example.jensensocialmedia.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.jensensocialmedia.model.SecurityUser;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -36,8 +37,9 @@ public class TokenService {
         if (principal instanceof SecurityUser su) {
             userIdClaim = su.getId();
         } else {
-            // fallback to subject/username (will be a String)
-            userIdClaim = authentication.getName();
+            throw new AuthenticationServiceException(
+                    "Unexpected principal type when generating token: " + principal.getClass().getName()
+            );
         }
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
