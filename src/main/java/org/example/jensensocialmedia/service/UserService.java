@@ -48,7 +48,7 @@ public class UserService {
             log.warn("Invalid user ID: {}", id);
             throw new IllegalArgumentException("Current user ID cannot be null or less than or equal to zero");
         }
-        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User not found"));
         log.info("Mapping user to UserProfileResponse DTO");
         return userMapper.toUserProfileResponse(user);
     }
